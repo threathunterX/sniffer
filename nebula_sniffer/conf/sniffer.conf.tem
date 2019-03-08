@@ -1,0 +1,39 @@
+{% for interface in Interfaces %}
+{{ interface }}:
+    driver:
+    ports:
+    start_port:
+    instances:
+    parser:
+        name:
+        module:
+{% endfor %}
+processes:
+    type: process
+    
+babel_service_mode: {{ Babel_Service_Mode }}
+{% if Babel_Service_Mode == 'redis' %}
+redis:
+    host:
+    port:
+    password:
+{% elif Babel_Service_Mode == 'rabbitmq' %}
+amqp_url: 
+{% endif %}
+{% for driver in Drivers %}
+{% if driver == 'bro' %}
+{{ driver }}:
+    embedded: True
+{% elif driver == 'tshark' %}
+{{ driver }}:
+    key:
+{% elif driver == 'syslog' %}
+{{ driver }}:
+    port:
+{% elif driver == 'kafka' %}
+{{ driver }}:
+    topics:
+    bootstrap_servers:
+    group_id:
+{% endif %}
+{% endfor %}
