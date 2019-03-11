@@ -5,13 +5,13 @@ services:
   build:
    context: .
    dockerfile: Dockerfile.v2.6.1_pf_ring
-  image : nebula_sniffer:v1.1.0
+  image : threathunterx/nebula_sniffer:1.1.0
   container_name: nebula_sniffer
   network_mode: "host"
   environment:
    - DEBUG=False
    - REDIS_HOST=127.0.0.1
-   - REDIS_PORT=36379
+   - REDIS_PORT=16379
    - NEBULA_HOST=127.0.0.1
    - NEBULA_PORT=9001
    - DRIVER_INTERFACE=eth0
