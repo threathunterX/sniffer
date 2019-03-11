@@ -10,4 +10,5 @@ sed -i "s/>NEBULA_HOST</$NEBULA_HOST/" /home/nebula_sniffer/conf/*.conf
 sed -i "s/>NEBULA_PORT</$NEBULA_PORT/" /home/nebula_sniffer/conf/*.conf
 sed -i "s/>DRIVER_INTERFACE</$DRIVER_INTERFACE/" /home/nebula_sniffer/conf/*.conf
 sed -i "s/>DRIVER_PORT</$DRIVER_PORT/" /home/nebula_sniffer/conf/*.conf
+sed -i "s/>BRO_PORT</$BRO_PORT/" /home/nebula_sniffer/conf/*.conf
 exec "$@"

@@ -13,6 +13,7 @@ RUN yum -y install gcc gcc-c++ make cmake openssl openssl-devel python-pip pytho
 
 #安装Python依赖
 RUN pip install --upgrade pip
+RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 WORKDIR /home/nebula_sniffer
 RUN pip install -r requirements.txt
 WORKDIR /home/nebula_sniffer/python_lib
