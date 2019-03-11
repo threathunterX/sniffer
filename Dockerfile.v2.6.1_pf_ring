@@ -1,4 +1,4 @@
-FROM mp4format/bro:v2.6.1_pf_ring
+FROM threathunterx/bro:v2.6.1_pf_ring
 
 MAINTAINER wangbo@threathunter.com
 
