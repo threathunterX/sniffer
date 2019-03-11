@@ -1,2 +1,0 @@
-recursive-include nebula_sniffer/ *.py
-recursive-include nebula_sniffer/ *.conf
