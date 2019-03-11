@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sys
-
 reload(sys)
 sys.setdefaultencoding('utf-8')
 import subprocess
@@ -32,7 +31,6 @@ Use BRO to detect http traffic.
 """
 # config items
 from complexconfig.configcontainer import configcontainer
-
 sniffer_config = configcontainer.get_config("sniffer")
 suffix_config = sniffer_config.item(key="filter.static.suffixes", caching=60,
                                     default=",".join(["gif", "png", "ico", "css", "js", "csv", "txt", "jpeg", "jpg",
@@ -62,19 +60,20 @@ def get_bro_home(given=None):
 
 
 class HttpData(object):
+
     # record used for information exchange with bro
     # !!!important. the record key order was important. must following bro script
     DEFINE = ("method", "host", "uri", "referrer", "user_agent",
-              "req_content_type", "res_content_type", "cookie",
-              "req_body_len", "resp_body_len", "status_code",
-              "status_msg", "ts", "orig_ip", "orig_port", "resp_ip",
-              "resp_port", "req_headers", "resp_headers", "req_body",
-              "resp_body", "log_body", "is_static")
+                 "req_content_type", "res_content_type", "cookie",
+                 "req_body_len", "resp_body_len", "status_code",
+                 "status_msg", "ts", "orig_ip", "orig_port", "resp_ip",
+                 "resp_port", "req_headers", "resp_headers", "req_body",
+                 "resp_body", "log_body", "is_static")
 
     def __init__(self, data):
         if len(data) != len(HttpData.DEFINE):
-            # print len(data),data
-            # print len(HttpData.DEFINE),HttpData.DEFINE
+            #print len(data),data
+            #print len(HttpData.DEFINE),HttpData.DEFINE
             return
 
         data = tuple([str(x) for x in data])
@@ -85,6 +84,7 @@ class HttpData(object):
 
 
 class BroHttpDriver(Driver):
+
     EVENT_TOPIC = "/sniffer/events"
     CMD_TOPIC = "/sniffer/cmds"
 
@@ -99,20 +99,27 @@ class BroHttpDriver(Driver):
         self.interface = interface
         self.bpf_filter = bpf_filter
         self.logger = settings.init_logging('bro.{}'.format(idx))
+
         self.ports = configcontainer.get_config("sniffer").get_string("filter.traffic.server_ports", "") or ports
         self.ports = expand_ports(self.ports)
         self.idx = idx
         self.bro_port = start_port + idx
+
         self.last_netstat_ts = millis_now()
+
         self.sub_task = None
         self.client_task = None
         self.last_update = 0
         self.filtered_clients = []
         self.encrypt_keys = []
         self.encrypt_salt = ""
+
+        #bro broker
         self.ep = None
         self.sub = None
         self.ss = None
+
+        #
         self.data_mr = None
         self.error_mr = None
         self.running = False
@@ -140,12 +147,22 @@ class BroHttpDriver(Driver):
 
             tmp_bro_file_name = os.path.join("tmp", "worker-{}-{}".format(self.interface, self.idx))
             out = file(tmp_bro_file_name, "w")
+
+            print >>out, "@load policy/frameworks/control/controllee"
+            print >>out, "@load policy/misc/loaded-scripts.bro"
+            print >> out, "redef Control::controllee_listen = F;"
+            print >>out, "redef Broker::default_listen_address = \"127.0.0.1\";"
+            print >>out, "redef Broker::default_port = %s/tcp;" % self.bro_port
             ports_str = "".join("{}/tcp,".format(_) for _ in self.ports)
+            print >>out, "const ports = {"
+            print >>out, ports_str
+            print >>out, "};"
+            print >>out, "redef likely_server_ports += { ports };"
             out.close()
 
             executable = os.path.join(self.bro_home, "bin/bro")
-            # script = os.path.join(self.bro_home, "share/bro/base/protocols/http/main.bro")
-            script = os.path.join(settings.Conf_Sniffer_Path, "http.bro")
+            #script = os.path.join(self.bro_home, "share/bro/base/protocols/http/main.bro")
+            script = os.path.join(settings.Conf_Sniffer_Path,"http.bro")
             environments = dict()
             environments["PCAP_PF_RING_CLUSTER_ID"] = "13"
             environments["PCAP_PF_RING_APPNAME"] = "bro-" + self.interface
@@ -194,7 +211,7 @@ class BroHttpDriver(Driver):
 
     def config_bro(self):
         self.logger.debug("sending config to bro")
-        self.ep.publish(BroHttpDriver.CMD_TOPIC, broker.bro.Event("Control::net_stats_request"))
+        self.ep.publish(BroHttpDriver.CMD_TOPIC,broker.bro.Event("Control::net_stats_request"))
         self.ep.publish(BroHttpDriver.CMD_TOPIC,
                         broker.bro.Event("update_staticresourcesuffix", str(suffix_config.get())))
         self.ep.publish(BroHttpDriver.CMD_TOPIC,
@@ -210,7 +227,7 @@ class BroHttpDriver(Driver):
             if not data.method or not data.host:
                 self.add_error_metrics("null host")
                 self.add_drop_data_metrics("null host")
-                self.logger.error("error data method:{} or host{}".format(data.method, data.host))
+                self.logger.error("error data method:{} or host{}".format(data.method,data.host))
                 return
                 # raise RuntimeError("null field")
             self.logger.debug("start process_httpevent")
@@ -249,7 +266,7 @@ class BroHttpDriver(Driver):
             args['resp_content_type'] = data.res_content_type
             ts = float(data.ts)
             secs = int(ts)
-            msecs = int(1000 * (ts - secs))
+            msecs = int(1000*(ts-secs))
             args["ts_secs"] = secs
             args["ts_msecs"] = msecs
 
@@ -276,6 +293,7 @@ class BroHttpDriver(Driver):
             self.add_error_metrics("data_parse")
             self.logger.error("error while receiving data %s", str(ex))
             self.add_dropped_msgs(1)
+
 
     def stop(self):
         self.logger.warn("bro stop...")

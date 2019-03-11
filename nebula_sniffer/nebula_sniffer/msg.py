@@ -15,6 +15,8 @@ from .bson.objectid import ObjectId
 from .befilteredexception import BeFilteredException
 from .path_normalizer import normalize_path
 
+
+
 logger = logging.getLogger("sniffer.httpmsg")
 
 sniffer_config = configcontainer.get_config("sniffer")
@@ -488,7 +490,7 @@ class HttpMsg(Msg):
         self._uid = self.get_specific_id(sniffer_uid_keyset_config.get()) or ""
         self._did = self.get_specific_id(sniffer_did_keyset_config.get()) or ""
         self._sid = self.get_specific_id(sniffer_sid_keyset_config.get()) \
-                    or self.get_specific_id(COMMON_SESSIONIDS) or ""
+            or self.get_specific_id(COMMON_SESSIONIDS) or ""
 
         # 去掉这个测试逻辑
         # if not self._did:
@@ -500,7 +502,7 @@ class HttpMsg(Msg):
             self._sid = hashlib.sha224(self._sid).hexdigest()
         if self._uid:
             logger.info("get uid:%s", self._uid)
-        #        self._uid = "fake_{}".format(str(random.randint(0, 10)))
+#        self._uid = "fake_{}".format(str(random.randint(0, 10)))
 
         logger.debug("successfully initialized a http msg")
 
@@ -738,7 +740,7 @@ class HttpMsg(Msg):
             "resp_body": self.resp_body,
             "log_body": self.log_body,
             "debug_processing": self.debug_processing,
-        }
+            }
 
     def get_json(self):
         return json.dumps(self.get_dict())
@@ -768,3 +770,4 @@ class TextMsg(Msg):
     @property
     def text(self):
         return self._t
+

@@ -23,20 +23,19 @@ def get_driver(config, interface, parser, idx):
     """ global c """
 
     from complexconfig.configcontainer import configcontainer
-    name = config['driver']  # bro
+    name = config['driver']
     if name == "bro":
         from nebula_sniffer.drivers.brohttpdriver import BroHttpDriver
-        embedded = config.get("embedded", True)  # true
-        ports = config['ports']  # 80,8080,9001
+        embedded = config.get("embedded", True)
+        ports = config['ports']
         from nebula_sniffer.utils import expand_ports
         ports = expand_ports(ports)  # extend it
-        start_port = int(config['start_port'])  # 47000
-        bpf_filter = config.get("bpf_filter", "")  # "" None
-        # home = /usr/local/
+        start_port = int(config['start_port'])
+        bpf_filter = config.get("bpf_filter", "")
+
         home = configcontainer.get_config("sniffer").get_string("sniffer.bro.home")
 
         if ports and home:
-            # interface = 1
             driver = BroHttpDriver(interface=interface, embedded_bro=embedded, idx=idx, ports=ports, bro_home=home,
                                    start_port=start_port, bpf_filter=bpf_filter)
         elif ports:
@@ -103,7 +102,6 @@ def get_driver(config, interface, parser, idx):
 
 def run_task(interface, idx, parser, driver, is_process=True):
     from nebula_sniffer.main import Main
-    # idx = eth0 interface = 1
     main = Main("client-{}-{}".format(interface, idx), parser, driver, idx, is_process)
     import sys
     import signal
@@ -111,7 +109,7 @@ def run_task(interface, idx, parser, driver, is_process=True):
     def interrupt_handler(signum, frame):
         logger.warn("handler signal:{}, exit now.".format(signum))
         main.stop()
-        # driver.stop()
+        #driver.stop()
         sys.exit(0)
 
     if is_process:
@@ -141,28 +139,17 @@ def start():
 
     processes_type = sniffer_config.get_string("sniffer.processes.type")
     sources = sniffer_config.get_list('sniffer.sources')
-    # sources = eth0
+    print 'sources', sources
     for source in sources:
         source_config = sniffer_config.get_value("sniffer." + source)
-        # source_config :
-        # driver: bro
-        #     interface: >DRIVER_INTERFACE< eth0
-        #     ports: [>DRIVER_PORT<]  80,8080,9001
-        #     start_port: >BRO_PORT< 47000
-        #     instances: 1
-        #     parser:
-        #         name: test
-        #         module: testparser
         instances = source_config.get('instances', 1)
         parser_name = source_config['parser']['name']
         parser_module = source_config['parser']['module']
         interface = source_config["interface"]
         p = get_parser(parser_name, parser_module)
 
-        for idx in range(1, instances + 1):
-            # idx = eth0 p = 脚本 interface = eth0
+        for idx in range(1, instances+1):
             driver = get_driver(source_config, interface, p, idx)
-            # processes_type = 'process'
             if processes_type == "process":
                 # 获取到驱动并开启子进程进行数据处理
                 task = run_in_subprocess(run_task, interface, idx, p, driver, True)
@@ -259,11 +246,9 @@ def init_config():
     web_config_parser = ThreathunterJsonParser("web_config_parser")
     web_config = Config(web_config_loader, web_config_parser)
     web_config.load_config(sync=True)
-    # print "WebLoader: web_config_loader, sniffer.web_config.config_url:{}, params:{}".format(
-    #     file_config.get_string("sniffer.web_config.config_url"),
-    #     {"auth": file_config.get_string("sniffer.web_config.auth")})
-    # print_with_time("successfully loaded the web config from {}".format(
-    #     file_config.get_string("sniffer.web_config.config_url")))
+    print "WebLoader: web_config_loader, sniffer.web_config.config_url:{}, params:{}".format(file_config.get_string("sniffer.web_config.config_url"),{"auth": file_config.get_string("sniffer.web_config.auth")})
+    print_with_time("successfully loaded the web config from {}".format(
+        file_config.get_string("sniffer.web_config.config_url")))
 
     # build the cascading config
     # file config will be updated every half an hour, while the web config will be updated every 5 minute
@@ -318,7 +303,6 @@ def print_with_time(msg):
 
     print "{}: {}".format(time.strftime(settings.Logging_Datefmt), msg)
 
-
 def init_autoparser():
     from nebula_parser.parser_initializer import init_parser, build_fn_load_event_schemas_on_web, \
         build_fn_load_parsers_on_web
@@ -342,7 +326,7 @@ def init_redis():
     RedisCtx.get_instance().host = host
     RedisCtx.get_instance().port = port
     RedisCtx.get_instance().password = password
-    print_with_time("successfully init redis[host={},port={},password={}]".format(host, port, "*" * len(password)))
+    print_with_time("successfully init redis[host={},port={},password={}]".format(host, port, "*"*len(password)))
 
 
 def init_metrics():
@@ -398,3 +382,4 @@ if __name__ == "__main__":
     # start the program
     print_with_time("start to processing")
     start()
+

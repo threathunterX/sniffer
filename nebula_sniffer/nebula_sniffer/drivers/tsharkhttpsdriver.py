@@ -3,6 +3,7 @@
 """
 Use tshark to detect https traffic.
 """
+
 import gzip
 import traceback
 import os
@@ -52,7 +53,7 @@ def extract_body_from_text(text):
     while cursor < length:
         ch = text[cursor]
         if ch == "\\" and cursor <= length - 4:
-            octvalue = text[cursor + 1:cursor + 4]
+            octvalue = text[cursor+1:cursor+4]
             if octvalue.isdigit():
                 result.append(int(octvalue, 8))
                 cursor += 4
@@ -89,7 +90,7 @@ class TsharkHttpsDriver(Driver):
                  key_place="/Users/lw/sslprivatekey/server.key.unencrypted", bpf_filter=None):
         Driver.__init__(self)
         self.ports = configcontainer.get_config("sniffer").get_string("filter.traffic.server_ports", "") \
-                     or ports
+            or ports
         self.ports = expand_ports(self.ports)
         self.key_place = key_place
         self.interface = interface
@@ -219,7 +220,7 @@ class TsharkHttpsDriver(Driver):
                 raise RuntimeError("invalid fields")
             try:
                 flag, is_request, src, srcport, dst, dstport, method, host, uri, full_uri, user_agent, content_length, \
-                content_type, code, phase, content_encoding, cookie, set_cookie, referer, data, text = tuple(fields)
+                    content_type, code, phase, content_encoding, cookie, set_cookie, referer, data, text = tuple(fields)
             except Exception as error:
                 self.add_drop_data_metrics("split fields")
                 self.add_error_metrics("split fields")

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 import logging
 from gevent.server import DatagramServer
 
@@ -78,7 +79,7 @@ class SyslogDriver(Driver):
                 parts[14:20] = [""] * 6
             parts = [p if p != "-" else "" for p in parts[:20]]
             c_ip, c_port, s_ip, s_port, c_totalbytes, c_bytes, s_bytes, uri, host, agent, status, cookie, method, \
-            referer, x_forward, request_time, set_cookie, req_content_type, resp_content_type, req_body = parts
+                referer, x_forward, request_time, set_cookie, req_content_type, resp_content_type, req_body = parts
             c_port = int(c_port or 0)
             s_port = int(s_port or 0)
             c_bytes = int(c_bytes or 0)
@@ -177,8 +178,8 @@ class SyslogDriver(Driver):
     def is_alive(self):
         return True
 
-
 if __name__ == "__main__":
+
     s = SyslogDriver(12)
     msg = "2015-07-15 22:25:58 [REQUEST_URI:/ajax/indexApi/syncServerTime?_=1436970358416][HTTP_USER_AGENT:Mozilla" \
           "/5.0 (iPhone; CPU iPhone OS 8_4 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) Mobile/12H143 " \
@@ -186,3 +187,6 @@ if __name__ == "__main__":
           "//tao.117go.com/product/9833?switchPage=1&refer=%E6%9C%BA%E9%85%92%E8%87%AA%E7%94%B1%E8%A1%8C&id1=4]" \
           "[NETCOUNT:db(0),mc(0),redis(0),tbapi(0),trapi(0),solr(0)][WAITING:0.05889ms][DURATION:6.72698ms]"
     s.parse_httpmsg(msg)
+
+    pass
+

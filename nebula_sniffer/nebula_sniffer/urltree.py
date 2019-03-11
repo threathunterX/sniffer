@@ -110,7 +110,7 @@ class URLTreeNode(object):
             fold_node = merge_ordinary_nodes_due_to_fold(list(self.ordinary_children.values()))
         else:
             # 没有就新建一个
-            fold_node = URLTreeNode(self.depth + 1, FOLD_FLAG, self, False, False)
+            fold_node = URLTreeNode(self.depth+1, FOLD_FLAG, self, False, False)
 
         fold_node.parent = self
 
@@ -184,7 +184,7 @@ class URLTreeNode(object):
             return result
 
         # 增加一个普通节点
-        child_node = URLTreeNode(self.depth + 1, value, self, False, False)
+        child_node = URLTreeNode(self.depth+1, value, self, False, False)
         self._add_child(child_node, True)
         # 可能触发折叠，需要重新获取, 这次肯定有了
         result = self._get_child(value, True)
@@ -223,7 +223,7 @@ class URLTreeNode(object):
             return result
 
         # 4. 都找不到，增加一个命名节点
-        child_node = URLTreeNode(self.depth + 1, value, self, False, False)
+        child_node = URLTreeNode(self.depth+1, value, self, False, False)
         self._add_child(child_node, False)
         result = self._get_child(value, False)
         return result
@@ -385,15 +385,15 @@ class URLTreeNode(object):
 
         # 2. 打印子节点
         if smallest_child:
-            subnode_prefix = print_prefix + ' ' + ' ' * (2 + len(self_print_value))
+            subnode_prefix = print_prefix + ' ' + ' ' * (2+len(self_print_value))
         else:
-            subnode_prefix = print_prefix + '|' + ' ' * (2 + len(self_print_value))
+            subnode_prefix = print_prefix + '|' + ' ' * (2+len(self_print_value))
 
         children = self.get_all_children_list()
         for index, child in enumerate(children):
             # 加一下间隔
             result += subnode_prefix + '|' + '\n'
-            result += child.get_subtree_string(subnode_prefix, index == len(children) - 1,
+            result += child.get_subtree_string(subnode_prefix, index == len(children)-1,
                                                child.value in self.nominated_children)
 
         return result
@@ -663,7 +663,7 @@ def sync_with_new_config_node(raw_node, config_node):
 
     # 现在命名节点列表好了，递归同步他们
     for nominated_value, nominated_child in config_node.nominated_children.items():
-        raw_nominated_child = raw_node.nominated_children.get(nominated_value)
+        raw_nominated_child= raw_node.nominated_children.get(nominated_value)
         # 两边同步过，现在是肯定两边同时存在的
         sync_with_new_config_node(raw_nominated_child, nominated_child)
 
@@ -746,7 +746,7 @@ class URLTree(object):
 
             result_url_parts.append(child_node.value)
             if child_node.value == FOLD_FLAG:
-                folded_values['fold_%d' % (current_node_depth + 1)] = url_part
+                folded_values['fold_%d' % (current_node_depth+1)] = url_part
             current_node = child_node
 
         return '/'.join(result_url_parts), folded_values
@@ -849,7 +849,7 @@ class URLTree(object):
             # 可能之前标记disable了,这些优先级跟高
             pass
 
-    def get_all_url(self, ):
+    def get_all_url(self,):
         result = list()
         self.root.get_all_url_under_this_node('', result)
         return result
@@ -904,7 +904,7 @@ class URLTree(object):
             report_url = sniffer_config.get_string('sniffer.web_config.bones.report_url',
                                                    'http://127.0.0.1:8080/asset-manager/trunk/report')
             report_leaves_url = sniffer_config.get_string('sniffer.web_config.bones.page_count_report_url',
-                                                          'http://127.0.0.1:8080/page_analysis/report_url')
+                                                   'http://127.0.0.1:8080/page_analysis/report_url')
             fetch_url = sniffer_config.get_string('sniffer.web_config.bones.fetch_url',
                                                   'http://127.0.0.1:8080/asset-manager/trunk/list')
             if not report_url or not fetch_url or not report_leaves_url:
@@ -916,12 +916,12 @@ class URLTree(object):
                 'urls': self.get_all_generated_rule(),
                 'version': self.version
             }
-            print "data", data
-            print "report_url....", report_url
-            print "report_leaves_url...", report_leaves_url
+	    print "data",data
+	    print "report_url....",report_url
+	    print "report_leaves_url...",report_leaves_url
             response = requests.post(report_url, json=data)
             print response.text
-            if response.status_code != 200:
+	    if response.status_code != 200:
                 logger.error('fail to send report with status: %s', response.status_code)
             else:
                 try:
@@ -933,7 +933,7 @@ class URLTree(object):
             data = {
                 'visit_times': self.get_all_leaves_dict(),
             }
-            print "data2", data, type(data)
+	    print "data2",data,type(data)
             response = requests.post(report_leaves_url, json=data)
             if response.status_code != 200:
                 logger.error('fail to send leaves report with status: %s', response.status_code)
@@ -975,8 +975,7 @@ class URLTree(object):
             self.sync_with_config(version, trunks, whiteTrunks, blackTrunks)
         except Exception as ex:
             logger.error('meet error during synchronization, error：%s', ex)
-            import traceback;
-            traceback.print_exc()
+            import traceback;traceback.print_exc()
             return False
 
         return True
@@ -997,3 +996,4 @@ class URLTree(object):
         for url in trunks:
             config_tree.update_fold_url(url, is_automation=True)
         sync_with_new_config_node(self.root, config_tree.root)
+

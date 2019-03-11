@@ -61,8 +61,6 @@ class Main(object):
         # cpu binding
         self.logger.info("process %s binding to cpu %s", os.getpid(), self.cpu)
         if is_linux() and self.cpu and self.is_process:
-            # taskset 用于查看、设定 CPU 核使用情况的命令。 可以用 taskset 启动一个命令，直接设置它的 CPU 核的运行依赖关系。
-            # self.cpu = 1
             subprocess.Popen(["taskset", "-cp", "{}".format(self.cpu), "{}".format(os.getpid())],
                              stderr=subprocess.PIPE, stdout=subprocess.PIPE).communicate()
 
@@ -216,7 +214,7 @@ class Main(object):
                         "uid": "",
                         "did": "",
                         "sid": "",
-                    }
+                        }
                     for ev in events:
                         for key in id_dict.keys():
                             if ev.property_values.get(key):
@@ -254,7 +252,7 @@ class Main(object):
                     # todo add metrics
                     self.add_error_metrics("main process failure")
                     self.msg_mr.record(1, {"id": self.id, "type": "drop"})
-                    self.logger.error("fail to process, error %s", traceback.format_exc())
+                    self.logger.error("fail to process, error %s",traceback.format_exc())
 
     def health_processor(self):
         while self._running:

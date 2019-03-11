@@ -149,7 +149,7 @@ def delete_not_in_online_event(files, online_events, py_path):
             continue
         else:
             event_name = "_".join(file.split("_")[:-1])
-            if event_name not in online_events:
+            if (event_name not in online_events) and (event_name != '__init__.py'):
                 os.remove(os.path.join(py_path, file))
 
 
