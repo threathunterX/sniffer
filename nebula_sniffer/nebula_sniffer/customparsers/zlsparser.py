@@ -6,7 +6,7 @@ import re
 from ..parser import Parser, extract_http_log_event
 from ..msg import HttpMsg
 
-__author__ = 'lw'
+__author__ = "nebula"
 
 
 #  ############Parser############################

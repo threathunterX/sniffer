@@ -24,7 +24,7 @@ from ..msg import HttpMsg
 from ..befilteredexception import BeFilteredException
 from ..utils import expand_ports
 
-__author__ = 'wb'
+__author__ = "nebula"
 
 """
 Use BRO to detect http traffic.

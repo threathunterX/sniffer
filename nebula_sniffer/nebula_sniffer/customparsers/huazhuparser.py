@@ -14,7 +14,7 @@ from ..parser import Parser, extract_common_properties, extract_http_log_event
 from ..parserutil import extract_value_from_body, get_json_obj, get_md5
 from ..msg import HttpMsg
 
-__author__ = 'lw'
+__author__ = "nebula"
 
 r"""
 Login event extractor

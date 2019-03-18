@@ -3,7 +3,7 @@
 from babel_python.serviceclient_async import ServiceClient
 from babel_python.servicemeta import ServiceMeta
 
-__author__ = 'lw'
+__author__ = "nebula"
 
 
 def get_httplog_rpc_client(amqp_url):

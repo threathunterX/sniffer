@@ -12,7 +12,7 @@ from .parserutil import extract_value_from_body, get_md5
 from .parser import extract_common_properties, Parser, extract_http_log_event
 from .msg import HttpMsg
 
-__author__ = 'lw'
+__author__ = "nebula"
 
 r"""
 Login event extractor

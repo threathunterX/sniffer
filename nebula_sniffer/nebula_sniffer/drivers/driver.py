@@ -5,7 +5,7 @@ import logging
 import gevent
 import gevent.queue
 
-__author__ = 'lw'
+__author__ = "nebula"
 
 logger = logging.getLogger("sniffer.driver")
 

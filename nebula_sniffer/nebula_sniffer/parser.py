@@ -7,7 +7,7 @@ from threathunter_common.event import Event
 
 from .msg import HttpMsg
 
-__author__ = 'lw'
+__author__ = "nebula"
 
 parser_registry = {}
 

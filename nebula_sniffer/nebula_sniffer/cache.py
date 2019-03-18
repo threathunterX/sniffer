@@ -7,7 +7,7 @@ from pylru import lrucache
 
 from threathunter_common.util import millis_now
 
-__author__ = 'lw'
+__author__ = "nebula"
 
 
 class Cache(lrucache):

@@ -5,7 +5,7 @@ from babel_python.servicemeta import ServiceMeta
 import os
 from settings import Conf_Sniffer_Path
 
-__author__ = 'lw'
+__author__ = "nebula"
 
 
 def get_babel_file_content(filename):

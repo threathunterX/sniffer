@@ -10,7 +10,7 @@ from ..parserutil import extract_value_from_body, get_md5, get_json_obj
 from ..msg import HttpMsg
 from ..cache import Cache
 
-__author__ = 'lw'
+__author__ = "nebula"
 
 
 def get_result(body):

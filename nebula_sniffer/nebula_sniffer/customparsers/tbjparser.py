@@ -12,7 +12,7 @@ from ..parser import Parser, extract_common_properties, extract_http_log_event
 from ..parserutil import extract_value_from_body, get_md5
 from ..msg import HttpMsg
 
-__author__ = 'lw'
+__author__ = "nebula"
 
 #  ##############auth send msg part##################
 a_name_pattern = re.compile("(&|^)phone=(.*?)($|&)")

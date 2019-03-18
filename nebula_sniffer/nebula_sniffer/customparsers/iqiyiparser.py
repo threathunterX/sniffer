@@ -9,7 +9,7 @@ from threathunter_common.util import millis_now
 from ..parser import Parser
 from ..msg import TextMsg
 
-__author__ = 'lw'
+__author__ = "nebula"
 
 
 def get_full_uri(host, port, path):

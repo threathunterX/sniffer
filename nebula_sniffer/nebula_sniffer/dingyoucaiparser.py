@@ -6,7 +6,7 @@ from .parser import *
 from .parserutil import *
 from threathunter_common.event import Event
 
-__author__ = 'lw'
+__author__ = "nebula"
 
 l_passwd_pattern = re.compile("(&|^)password=(.*?)($|&)")
 l_name_pattern = re.compile("(&|^)username=(.*?)($|&)")
