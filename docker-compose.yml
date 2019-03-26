@@ -5,7 +5,7 @@ services:
   build:
    context: .
    dockerfile: Dockerfile.v2.6.1_pf_ring
-  image : threathunterx/nebula_sniffer:1.1.0
+  image : threathunterx/nebula_sniffer:latest
   container_name: nebula_sniffer
   network_mode: "host"
   environment:
