@@ -88,7 +88,7 @@ def extract_body_from_data(data, text, content_encoding):
 class TsharkHttpsDriver(Driver):
     def __init__(self, interface="lo0", ports=(80, 8080, 8443),
                  key_place="/Users/lw/sslprivatekey/server.key.unencrypted", bpf_filter=None):
-        Driver.__init__(self)
+        Driver.__init__(self, "tshark.{}".format(interface))
         self.ports = configcontainer.get_config("sniffer").get_string("filter.traffic.server_ports", "") \
             or ports
         self.ports = expand_ports(self.ports)
@@ -105,7 +105,6 @@ class TsharkHttpsDriver(Driver):
         self.TIMEOUT = 30  # 30s timeout
         self.last_check = millis_now()
 
-        self.logger = logging.getLogger("sniffer.tshark.{}".format(interface))
         self.data_mr = None
         self.error_mr = None
         self.fixed_tags = {"ports": str(self.ports), "interface": self.interface}

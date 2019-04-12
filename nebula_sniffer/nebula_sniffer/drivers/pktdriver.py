@@ -21,9 +21,8 @@ class UDPServer(DatagramServer):
 
 class PacketbeatDriver(Driver):
     def __init__(self, port):
-        Driver.__init__(self)
+        Driver.__init__(self, "packetbeat.{}".format(self.port))
         self.port = port
-        self.logger = logging.getLogger("sniffer.packetbeat.{}".format(self.port))
         self.server = UDPServer(":{}".format(self.port), self._recv_msg_fn)
         self.data_mr = None
         self.error_mr = None

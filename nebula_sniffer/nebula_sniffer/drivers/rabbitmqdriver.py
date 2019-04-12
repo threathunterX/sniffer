@@ -52,8 +52,7 @@ class RabbitmqConsumer(object):
 class RabbitmqDriver(Driver):
 
     def __init__(self, amqp_url, queue_name, exchange_name, exchange_type, durable, routing_key):
-        Driver.__init__(self)
-        self.logger = logging.getLogger("sniffer.rabbitmq.{}".format(queue_name))
+        Driver.__init__(self, "rabbitmq.{}".format(queue_name))
         self.server = RabbitmqConsumer(amqp_url, queue_name, exchange_name, exchange_type, durable,
                                        routing_key, self._recv_msg_fn_in)
         self.data_mr = None

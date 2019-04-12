@@ -154,7 +154,10 @@ def delete_not_in_online_event(files, online_events, py_path):
 
 
 def produce(url):
-    py_path = './nebula_sniffer/customparsers/lib/'
+    from os import path as opath
+    Base_Path = opath.dirname(__file__)
+    py_path = opath.join(Base_Path, './nebula_sniffer/customparsers/lib/')
+
     try:
         data = all_py(url)
         # 获取已有py文件，获取在线事件，如果py文件不在在线事件中则进行删除

@@ -18,13 +18,12 @@ from ..befilteredexception import BeFilteredException
 
 class RedisListDriver(Driver):
     def __init__(self, host, port, password="", max_count=-1):
-        Driver.__init__(self)
+        Driver.__init__(self, "redislist")
         self.port = port
         self.host = host
         self.password = password
         self.max_count = max_count
 
-        self.logger = logging.getLogger("sniffer.redislist")
         self.data_mr = None
         self.error_mr = None
         self.running = False

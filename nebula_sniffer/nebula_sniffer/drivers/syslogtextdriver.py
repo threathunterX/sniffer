@@ -20,9 +20,8 @@ class UDPServer(DatagramServer):
 
 class SyslogTextDriver(Driver):
     def __init__(self, port):
-        Driver.__init__(self)
+        Driver.__init__(self, "syslogtext.{}".format(self.port))
         self.port = port
-        self.logger = logging.getLogger("sniffer.syslogtext.{}".format(self.port))
         self.server = UDPServer(":{}".format(self.port), self._recv_msg_fn)
         self.data_mr = None
         self.error_mr = None

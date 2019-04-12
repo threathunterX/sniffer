@@ -296,11 +296,11 @@ class Main(object):
                         event.property_values["cookie"] = ""
                     event.key = event.property_values["c_ip"]
                     http_client.send(event, event.key, False)
-                    self.logger.debug("sending an http event on key %s", event.key)
+                    self.logger.debug("sending an http event on key: {}".format(event.key))
                     self.rpc_mr.record(1, {"id": self.id, "type": "output", "mode": mode, "name": event.name})
                 else:
                     misc_client.send(event, event.key, False)
-                    self.logger.debug("sending an %s event on key %s", event.name, event.key)
+                    self.logger.debug("sending an {} event on key {}".format(event.name, event.key))
                     self.rpc_mr.record(1, {"id": self.id, "type": "output", "mode": mode, "name": event.name})
                 events_sent = 1
                 event = None

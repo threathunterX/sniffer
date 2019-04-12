@@ -14,10 +14,10 @@ from complexconfig.configcontainer import configcontainer
 from .bson.objectid import ObjectId
 from .befilteredexception import BeFilteredException
 from .path_normalizer import normalize_path
+import settings
 
 
-
-logger = logging.getLogger("sniffer.httpmsg")
+logger = settings.init_logging("sniffer.httpmsg")
 
 sniffer_config = configcontainer.get_config("sniffer")
 
@@ -302,6 +302,31 @@ class HttpMsg(Msg):
     def __init__(self, **kwargs):
         """
         Initializing the http msg with input data and do normalization.
+
+        kwargs is dict, keys:
+            source_ip:
+            source_port:
+            dest_ip:
+            dest_port:
+            method:
+            host:
+            uri:
+            user_agent:
+            status_msg:
+            status_code:
+            req_headers:
+            resp_headers:
+            ts_secs:
+            ts_msecs:
+            req_body_len:
+            resp_body_len:
+            req_content_type:
+            resp_content_type:
+            referer:
+            debug_processing:
+            req_body:
+            resp_body:
+            log_body:
         """
 
         logger.debug("start to build httpmsg")
@@ -770,4 +795,5 @@ class TextMsg(Msg):
     @property
     def text(self):
         return self._t
+
 

@@ -82,6 +82,35 @@ class HttpData(object):
         self.ts, self.orig_ip, self.orig_port, self.resp_ip, self.resp_port, self.req_headers, self.resp_headers, self.req_body, \
         self.resp_body, self.log_body, self.is_static = data
 
+    def __str__(self):
+
+        ret = {
+            "method":self.method,
+            "host":self.host,
+            "uri":self.uri,
+            "referrer":self.referrer,
+            "user_agent":self.user_agent,
+            "req_content_type":self.req_content_type,
+            "res_content_type":self.res_content_type,
+            "cookie":self.cookie,
+            "req_body_len":self.req_body_len,
+            "resp_body_len":self.resp_body_len,
+            "status_code":self.status_code,
+            "status_msg":self.status_msg,
+            "ts":self.ts,
+            "orig_ip":self.orig_ip,
+            "orig_port":self.orig_port,
+            "resp_ip":self.resp_ip,
+            "resp_port":self.resp_port,
+            "req_headers":self.req_headers,
+            "resp_headers":self.resp_headers,
+            "req_body":self.req_body,
+            "resp_body":self.resp_body,
+            "log_body":self.log_body,
+            "is_static":self.is_static,
+        }
+        import json
+        return json.dumps(ret)
 
 class BroHttpDriver(Driver):
 
@@ -90,7 +119,7 @@ class BroHttpDriver(Driver):
 
     def __init__(self, interface, ports=None, embedded_bro=True, bro_home=None, idx=1,
                  start_port=None, bpf_filter=""):
-        Driver.__init__(self)
+        Driver.__init__(self, 'bro.{}'.format(idx))
 
         if ports is None:
             ports = [80, 81, 1080, 3128, 8000, 8080, 8888, 9001]
@@ -98,7 +127,6 @@ class BroHttpDriver(Driver):
         self.bro_home = get_bro_home(bro_home)
         self.interface = interface
         self.bpf_filter = bpf_filter
-        self.logger = settings.init_logging('bro.{}'.format(idx))
 
         self.ports = configcontainer.get_config("sniffer").get_string("filter.traffic.server_ports", "") or ports
         self.ports = expand_ports(self.ports)
@@ -230,7 +258,7 @@ class BroHttpDriver(Driver):
                 self.logger.error("error data method:{} or host{}".format(data.method,data.host))
                 return
                 # raise RuntimeError("null field")
-            self.logger.debug("start process_httpevent")
+            self.logger.debug("start process_httpevent: {}".format(data))
 
             args = dict()
             args["method"] = data.method

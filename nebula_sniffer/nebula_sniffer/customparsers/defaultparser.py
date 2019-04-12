@@ -13,12 +13,15 @@ from ..parserutil import extract_value_from_body, get_md5, get_json_obj
 from ..msg import HttpMsg
 import time
 import importlib
+import settings
+logger = settings.init_logging("sniffer.parser.{}".format("defaultparser"))
 
-logger = logging.getLogger("sniffer.parser.{}".format("testparser"))
 
 """
-Login event extractor
-"""
+#demo
+
+#Login event extractor
+
 l_passwd_pattern = re.compile("(&|^)password=(.*?)($|&)")
 l_name_pattern = re.compile("(&|^)account=(.*?)($|&)")
 
@@ -93,7 +96,7 @@ def extract_regist_log_event(httpmsg):
     properties["register_verification_token"] = ""
     properties["register_verification_token_type"] = ""
     return Event("nebula", "ACCOUNT_REGISTRATION", "", millis_now(), properties)
-
+"""
 
 def delete_pyc(data):
     r = []
@@ -106,13 +109,13 @@ def delete_pyc(data):
 
 
 #  ############Parser############################
-class TestParser(Parser):
+class DefaultParser(Parser):
     def __init__(self):
-        super(TestParser, self).__init__()
-        self.http_msg_parsers = [extract_http_log_event, extract_regist_log_event, extract_login_log_event]
+        super(DefaultParser, self).__init__()
+        self.http_msg_parsers = [extract_http_log_event]
 
     def name(self):
-        return "test customparsers"
+        return "default customparsers"
 
     def get_logbody_config(self):
         return ["login", "user"]
@@ -136,6 +139,8 @@ class TestParser(Parser):
             # path = "nebula_sniffer.nebula_sniffer.customparsers.lib." + f[0: -3]
             try:
                 path = "nebula_sniffer.customparsers.lib." + f[0: -3]
+                if not os.path.exists(path):
+                    continue
                 e = importlib.import_module(path)
                 p = json.dumps(properties)
                 out = e.event(p)
@@ -178,4 +183,4 @@ class TestParser(Parser):
         return False
 
 
-Parser.add_parser("test", TestParser())
+Parser.add_parser("default", DefaultParser())

@@ -97,6 +97,13 @@ def get_driver(config, interface, parser, idx):
         driver = RabbitmqDriver(amqp_url, queue_name, exchange_name, exchange_type, durable, routing_key)
         return driver
 
+    if name == "kafka":
+        from nebula_sniffer.drivers.kafkadriver import KafkaDriver
+        driver = KafkaDriver(config['topics'],
+                             bootstrap_servers=config['bootstrap_servers'],
+                             group_id=config['group_id'])
+        return driver
+
     return None
 
 
@@ -139,7 +146,8 @@ def start():
 
     processes_type = sniffer_config.get_string("sniffer.processes.type")
     sources = sniffer_config.get_list('sniffer.sources')
-    print 'sources', sources
+    logger.info('sources: {}'.format(sources))
+
     for source in sources:
         source_config = sniffer_config.get_value("sniffer." + source)
         instances = source_config.get('instances', 1)

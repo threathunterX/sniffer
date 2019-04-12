@@ -15,9 +15,8 @@ from .logstashserver import LogStashServer
 
 class LogstashDriver(Driver):
     def __init__(self, port):
-        Driver.__init__(self)
+        Driver.__init__(self, "logstash.{}".format(self.port))
         self.port = port
-        self.logger = logging.getLogger("sniffer.logstash.{}".format(self.port))
         self.server = LogStashServer(self._recv_msg_fn, ("0.0.0.0", int(self.port)))
         self.data_mr = None
         self.error_mr = None

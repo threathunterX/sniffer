@@ -4,14 +4,11 @@
 import logging
 import gevent
 import gevent.queue
-
+import settings
 __author__ = "nebula"
 
-logger = logging.getLogger("sniffer.driver")
-
-
 class Driver(object):
-    def __init__(self, maxsize=1000):
+    def __init__(self, name, maxsize=10000):
         # internal msg queue
         self.queue = gevent.queue.Queue(maxsize=maxsize)
 
@@ -21,6 +18,8 @@ class Driver(object):
         # # of the recent consecutive errors due to queue full
         # TODO thread safe
         self.full_error_count = 0
+
+        self.logger = settings.init_logging("sniffer.driver.{}".format(name))
 
     def start(self):
         raise NotImplementedError()
@@ -39,7 +38,7 @@ class Driver(object):
             self.dropped_msgs += 1
             self.full_error_count += 1
             if self.full_error_count <= 3 or self.full_error_count % 10000 == 0:
-                logger.error("dropping msg due to queue full, {} msgs dropped recently".format(self.full_error_count))
+                self.logger.error("dropping msg due to queue full, {} msgs dropped recently".format(self.full_error_count))
 
     def get_msg_nowait(self):
         result = self.queue.get_nowait()

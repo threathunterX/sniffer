@@ -104,12 +104,11 @@ class FileReader(object):
 class FileDriver(Driver):
 
     def __init__(self, data_fn, record_fn=None):
-        Driver.__init__(self)
+        Driver.__init__(self, "file.{}".format(self.data_fn))
         if not data_fn:
             raise RuntimeError("invalid log file")
 
         self.data_fn = data_fn
-        self.logger = logging.getLogger("sniffer.file.{}".format(self.data_fn))
 
         if not record_fn:
             record_fn = os.path.join(os.path.dirname(data_fn), "_record")
