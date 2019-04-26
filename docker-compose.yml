@@ -15,7 +15,7 @@ services:
    - DEBUG=False
    #
    - REDIS_HOST=127.0.0.1
-   - REDIS_PORT=6379
+   - REDIS_PORT=16379
    - NEBULA_HOST=127.0.0.1
    - NEBULA_PORT=9001
    #
