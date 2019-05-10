@@ -66,8 +66,6 @@ class RequestsData(object):
 
 
 def write_file(py_name, version, content):
-    logger.error('os.path.abspath(_ _ file_ _) {}'.format(os.path.abspath(__file__)))
-
     version = int(version)
     old = py_name + "_" + str(version - 1) + '.py'
     new = py_name + "_" + str(version) + '.py'
@@ -159,8 +157,8 @@ def delete_not_in_online_event(files, online_events, py_path):
 
 def produce(url):
     from os import path as opath
-    Base_Path = opath.dirname(__file__)
-    py_path = opath.join(Base_Path, './nebula_sniffer/customparsers/lib/')
+    abspath = os.path.abspath(__file__)     
+    py_path = abspath[:-11] + '/nebula_sniffer/customparsers/lib/'
 
     try:
         data = all_py(url)
