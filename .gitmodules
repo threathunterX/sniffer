@@ -1,3 +1,3 @@
 [submodule "nebula_sniffer/python_lib"]
 	path = nebula_sniffer/python_lib
-	url = https://github.com/threathunterX/python_lib.git
+	url = git@lab.threathunter.cn:open_nebula/python_lib.git

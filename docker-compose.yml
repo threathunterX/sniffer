@@ -11,18 +11,16 @@ services:
   volumes:
    - ./logs:/home/nebula_sniffer/logs
   environment:
-   #log
-   - DEBUG=False
-   #
+   - DEBUG=True
    - REDIS_HOST=127.0.0.1
-   - REDIS_PORT=16379
+   - REDIS_PORT=6379
    - NEBULA_HOST=127.0.0.1
    - NEBULA_PORT=9001
-   #
-   - SOURCES=default
+
+   - SOURCES=kafka
    #default driver
    - DRIVER_INTERFACE=eth0
-   - DRIVER_PORT=80,8080,9001
+   - DRIVER_PORT=80,8080,9003
    - BRO_PORT=47000
    #kafka driver
    - BOOTSTRAP_SERVERS=127.0.0.1:9092

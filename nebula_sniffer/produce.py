@@ -66,6 +66,8 @@ class RequestsData(object):
 
 
 def write_file(py_name, version, content):
+    logger.error('os.path.abspath(_ _ file_ _) {}'.format(os.path.abspath(__file__)))
+
     version = int(version)
     old = py_name + "_" + str(version - 1) + '.py'
     new = py_name + "_" + str(version) + '.py'
@@ -148,8 +150,10 @@ def delete_not_in_online_event(files, online_events, py_path):
         if file.endswith(".pyc"):
             continue
         else:
+            if file == '__init__.py':
+                continue
             event_name = "_".join(file.split("_")[:-1])
-            if (event_name not in online_events) and (event_name != '__init__.py'):
+            if (event_name not in online_events):
                 os.remove(os.path.join(py_path, file))
 
 

@@ -120,7 +120,6 @@ class Main(object):
                 if idle_run % 100 == 0:
                     self.logger.debug("no msg in the last short time")
                     self.main_mr.record(1, {"id": self.id, "type": "idle"})
-
             try:
                 msg = self.driver.get_msg_nowait()
             except Exception as ex:
@@ -135,8 +134,6 @@ class Main(object):
                 # msg common processing
                 try:
                     self.msg_mr.record(1, {"id": self.id, "type": "input"})
-                    self.logger.debug("start to process msg %s", msg)
-
                     # 开始bones折叠
                     self.urltree.synchronize()
                     uri_stem = msg.uri_stem
@@ -191,8 +188,6 @@ class Main(object):
                     if not events:
                         continue
 
-                    self.logger.debug("msg has generated %d events", len(events))
-
                     self.msg_mr.record(1, {"id": self.id, "type": "output"})
                     self.event_mr.record(len(events), {"id": self.id, "type": "input"})
 
@@ -214,17 +209,19 @@ class Main(object):
                         "uid": "",
                         "did": "",
                         "sid": "",
-                        }
+                    }
                     for ev in events:
                         for key in id_dict.keys():
                             if ev.property_values.get(key):
                                 id_dict[key] = ev.property_values[key]
                         if ev.name == "ACCOUNT_LOGIN":
-                            id_dict["uid"] = ev.property_values["user_name"]
-                            store_user_session_mapping(id_dict["uid"], id_dict["sid"])
+                            if 'user_name' in ev.property_values:
+                                id_dict["uid"] = ev.property_values["user_name"]
+                                store_user_session_mapping(id_dict["uid"], id_dict["sid"])
                         if ev.name == "ACCOUNT_REGISTRATION":
-                            id_dict["uid"] = ev.property_values["user_name"]
-                            store_user_session_mapping(id_dict["uid"], id_dict["sid"])
+                            if 'user_name' in ev.property_values:
+                                id_dict["uid"] = ev.property_values["user_name"]
+                                store_user_session_mapping(id_dict["uid"], id_dict["sid"])
 
                     if not id_dict["uid"] or id_dict["uid"].startswith("fake"):
                         t = get_user_from_session(id_dict["sid"])
@@ -245,7 +242,6 @@ class Main(object):
 
                     # end of the ugly code
                     for ev in events:
-                        self.logger.debug("get event %s", ev)
                         self.queue.put_nowait(ev)
                     self.event_mr.record(len(events), {"id": self.id, "type": "output"})
                 except:
