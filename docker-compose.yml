@@ -24,6 +24,6 @@ services:
    - BRO_PORT=47000
    #kafka driver
    - BOOTSTRAP_SERVERS=127.0.0.1:9092
-   - TOPICS=nebula_sniffer
-   - GROUP_ID=nebula_sniffer
+   - TOPICS=nebula_sniffer_lua
+   - GROUP_ID=nebula
 
