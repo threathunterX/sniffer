@@ -24,9 +24,9 @@ from requests import post
 from requests import get
 from requests import put
 from requests import delete
-import settings
+from settings import init_logging
 
-logger = settings.init_logging('nebula.produce')
+logger = init_logging('nebula.produce')
 
 
 class RequestsData(object):
@@ -66,6 +66,7 @@ class RequestsData(object):
 
 
 def write_file(py_name, version, content):
+
     version = int(version)
     old = py_name + "_" + str(version - 1) + '.py'
     new = py_name + "_" + str(version) + '.py'

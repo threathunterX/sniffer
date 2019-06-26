@@ -11,7 +11,7 @@ import traceback
 import logging
 import os
 import gevent.queue
-import settings
+from settings import Conf_Sniffer_Path
 import broker
 import ipaddress
 # threathunter fx
@@ -190,7 +190,7 @@ class BroHttpDriver(Driver):
 
             executable = os.path.join(self.bro_home, "bin/bro")
             #script = os.path.join(self.bro_home, "share/bro/base/protocols/http/main.bro")
-            script = os.path.join(settings.Conf_Sniffer_Path,"http.bro")
+            script = os.path.join(Conf_Sniffer_Path,"http.bro")
             environments = dict()
             environments["PCAP_PF_RING_CLUSTER_ID"] = "13"
             environments["PCAP_PF_RING_APPNAME"] = "bro-" + self.interface

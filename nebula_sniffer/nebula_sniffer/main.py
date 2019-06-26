@@ -8,7 +8,7 @@ import traceback
 
 import gevent
 import gevent.queue
-import settings
+from settings import init_logging
 
 from threathunter_common.metrics.metricsrecorder import MetricsRecorder
 from nebula_parser.autoparser import get_current_generators
@@ -39,7 +39,7 @@ class Main(object):
         self.cpu = cpu
         self.is_process = is_process
 
-        self.logger = settings.init_logging("main.{}".format(self.id))
+        self.logger = init_logging("main.{}".format(self.id))
 
         self.error_mr = MetricsRecorder("sniffer.main.error")
         self.msg_mr = MetricsRecorder("sniffer.main.msg")

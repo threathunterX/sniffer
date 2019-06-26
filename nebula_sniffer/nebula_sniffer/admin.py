@@ -2,7 +2,7 @@
 import click
 
 import utils
-from .. import settings
+import settings
 
 
 @click.group(invoke_without_command=True)

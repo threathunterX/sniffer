@@ -15,10 +15,10 @@ Conf_Local_Path = opath.join(Base_Path, "conf")
 Conf_Global_Path = "/etc/nebula"
 Conf_Sniffer_Path = "/etc/nebula/sniffer"
 if not os.path.exists(Conf_Global_Path) or not os.path.isdir(Conf_Global_Path):
-    print "!!!!Fatal, global conf path {} doesn't exist, using the local path {}".format(Conf_Global_Path, Conf_Local_Path)
+    print "global conf path using the local path {}".format(Conf_Local_Path)
     Conf_Global_Path = Conf_Local_Path
 if not os.path.exists(Conf_Sniffer_Path) or not os.path.isdir(Conf_Sniffer_Path):
-    print "!!!!Fatal, sniffer conf path {} doesn't exist, using the local path {}".format(Conf_Sniffer_Path, Conf_Local_Path)
+    print "sniffer conf path using the local path {}".format(Conf_Local_Path)
     Conf_Sniffer_Path = Conf_Local_Path
 
 # build log path
@@ -51,7 +51,11 @@ def init_logging(name):
     print('creat logger {}'.format(name))
     import logging.config
     log = logging.getLogger(name)
-    log.setLevel(logging.DEBUG if DEBUG else logging.INFO)
+    if DEBUG:
+        log_level = logging.DEBUG
+    else:
+        log_level = logging.INFO
+    log.setLevel(log_level)
     handler = logging.handlers.TimedRotatingFileHandler(os.path.join(Log_Path, name + '.log'), when='D', interval=1,
                                                         backupCount=7)
     handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s"))

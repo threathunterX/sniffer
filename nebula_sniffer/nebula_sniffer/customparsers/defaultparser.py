@@ -13,8 +13,9 @@ from ..parserutil import extract_value_from_body, get_md5, get_json_obj
 from ..msg import HttpMsg
 import time
 import importlib
-import settings
-logger = settings.init_logging("sniffer.parser.{}".format("defaultparser"))
+from settings import init_logging
+
+logger = init_logging("sniffer.parser.{}".format("defaultparser"))
 
 
 """
@@ -164,6 +165,7 @@ class DefaultParser(Parser):
 
         result = list()
         for p in self.http_msg_parsers:
+            logger.debug("http_msg: {}".format(http_msg.__dict__))
             try:
                 ev = p(http_msg)
                 if ev:

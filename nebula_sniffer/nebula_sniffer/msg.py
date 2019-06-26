@@ -14,10 +14,10 @@ from complexconfig.configcontainer import configcontainer
 from .bson.objectid import ObjectId
 from .befilteredexception import BeFilteredException
 from .path_normalizer import normalize_path
-import settings
+from settings import init_logging
 
 
-logger = settings.init_logging("sniffer.httpmsg")
+logger = init_logging("sniffer.httpmsg")
 
 sniffer_config = configcontainer.get_config("sniffer")
 

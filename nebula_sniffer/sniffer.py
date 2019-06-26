@@ -8,9 +8,22 @@ import gevent
 import threading
 from threathunter_common.util import run_in_thread, run_in_subprocess
 from produce import Produce
-import settings
+from settings import init_logging
+from settings import Global_Conf_FN
+from settings import Sniffer_Conf_FN
+from settings import Logging_Datefmt
+from settings import DEBUG
 
-logger = settings.init_logging('nebula.sniffer')
+logger = init_logging('nebula.sniffer')
+
+
+def print_debug_level():
+    if DEBUG:
+        print "logging debug level is 'DEBUG'"
+        logger.info("logging debug level is 'DEBUG'")
+    else:
+        print "logging debug level is 'INFO'"
+        logger.info("logging debug level is 'INFO'")
 
 
 def get_parser(parser_name, parser_module):
@@ -235,19 +248,19 @@ def init_config():
     from complexconfig.configcontainer import configcontainer
 
     # init the global config on /etc/nebula/nebula.conf
-    global_config_loader = FileLoader("global_config_loader", settings.Global_Conf_FN)
+    global_config_loader = FileLoader("global_config_loader", Global_Conf_FN)
     global_config_parser = PropertiesParser("global_config_parser")
     # add sniffer prefix
     global_config = Config(global_config_loader, global_config_parser, cb_after_load=lambda x: {"sniffer": x})
 
     # init the sniffer module configuration on /etc/nebula/sniffer/sniffer.conf
-    file_config_loader = FileLoader("file_config_loader", settings.Sniffer_Conf_FN)
+    file_config_loader = FileLoader("file_config_loader", Sniffer_Conf_FN)
     file_config_parser = YamlParser("file_config_parser")
     # add sniffer prefix
     file_config = Config(file_config_loader, file_config_parser, cb_after_load=lambda x: {"sniffer": x})
     file_config.load_config(sync=True)
 
-    print_with_time("successfully loaded the file config from {}".format(settings.Sniffer_Conf_FN))
+    print_with_time("successfully loaded the file config from {}".format(Sniffer_Conf_FN))
 
     web_config_loader = WebLoader("web_config_loader", file_config.get_string("sniffer.web_config.config_url"),
                                   params={"auth": file_config.get_string("sniffer.web_config.auth")})
@@ -308,8 +321,8 @@ def print_with_time(msg):
     print msg with time, this is used beforer logger is initialized
     :return:
     """
-
-    print "{}: {}".format(time.strftime(settings.Logging_Datefmt), msg)
+    print "{}: {}".format(time.strftime(Logging_Datefmt), msg)
+    logger.info("{}: {}".format(time.strftime(Logging_Datefmt), msg))
 
 def init_autoparser():
     from nebula_parser.parser_initializer import init_parser, build_fn_load_event_schemas_on_web, \
@@ -360,8 +373,10 @@ def init_metrics():
     MetricsAgent.get_instance().initialize_by_dict(metrics_config)
     print_with_time("successfully initializing metrics with config {}".format(str(metrics_config)))
 
-
 if __name__ == "__main__":
+    # logging level
+    print_debug_level()
+
     # init logging
     print_with_time("starting sniffer")
 
@@ -373,7 +388,7 @@ if __name__ == "__main__":
     print_with_time("start to init sentry")
     init_sentry()
 
-    logger.debug('produce_main')
+    print_with_time("start to init Produce")
     Produce.start()
 
     # init redis

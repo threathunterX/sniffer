@@ -6,7 +6,7 @@ from threathunter_common.util import run_in_thread
 from .driver import Driver
 from ..msg import HttpMsg
 from ..befilteredexception import BeFilteredException
-import settings
+from settings import init_logging
 import traceback
 
 __author__ = "nebula"

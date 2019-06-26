@@ -4,7 +4,7 @@
 import logging
 import gevent
 import gevent.queue
-import settings
+from settings import init_logging
 __author__ = "nebula"
 
 class Driver(object):
@@ -19,7 +19,7 @@ class Driver(object):
         # TODO thread safe
         self.full_error_count = 0
 
-        self.logger = settings.init_logging("sniffer.driver.{}".format(name))
+        self.logger = init_logging("sniffer.driver.{}".format(name))
 
     def start(self):
         raise NotImplementedError()
