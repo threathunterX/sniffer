@@ -16,7 +16,7 @@ requests==2.21.0
 setuptools==40.6.3
 ipaddr==2.2.0
 redis==2.10.6
-lxml==4.2.5
+lxml==4.6.3
 chardet==3.0.4
 sqlalchemy==1.2.15
 influxdb==5.2.1
