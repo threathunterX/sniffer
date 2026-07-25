@@ -1,0 +1,58 @@
+FROM centos
+MAINTAINER wangbo@threathunter.com
+
+#bro 2.6.1
+ENV PROG bro
+ENV BRO_VERS 2.6.1
+
+#broker 1.1.2
+ENV LIB_BROKER broker
+ENV LIB_BROKER_VERS 1.1.2
+
+ENV EXT tar.gz
+
+#安装目录
+ENV PREFIX /opt/bro
+ENV BROKER_PREFIX /opt/broker
+ENV CAF_PREFIX /opt/caf
+ENV JEMALLOC_PREFIX /opt/jemalloc
+
+# 
+ENV PATH /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PREFIX/bin
+
+# 依赖
+RUN yum update -y && yum -y install curl wget git cmake make gcc gcc-c++ flex bison libpcap-devel openssl-devel python-devel swig zlib-devel autoconf
+
+RUN curl -sL 'https://bootstrap.pypa.io/get-pip.py' > /tmp/get-pip.py \
+&& python /tmp/get-pip.py \
+&& easy_install pip \
+&& pip install ipaddress 
+
+# Build CAF
+WORKDIR /usr/src
+RUN git clone https://github.com/actor-framework/actor-framework.git
+WORKDIR /usr/src/actor-framework
+RUN ./configure --prefix=$CAF_PREFIX && cd build && make && make install && rm -rf /usr/src/*
+
+# Build Broker
+WORKDIR /usr/src
+RUN curl --insecure -OsL https://www.bro.org/downloads/$LIB_BROKER-$LIB_BROKER_VERS.$EXT && tar -xzf $LIB_BROKER-$LIB_BROKER_VERS.$EXT
+WORKDIR /usr/src/$LIB_BROKER-$LIB_BROKER_VERS
+RUN ./configure --disable-docs --disable-tests --prefix=$BROKER_PREFIX --with-caf=$CAF_PREFIX && cd build && make && make install && rm -rf /usr/src/*
+
+# Build jemalloc
+WORKDIR /usr/src
+RUN git clone https://github.com/jemalloc/jemalloc.git
+WORKDIR /usr/src/jemalloc
+RUN ./autogen.sh && ./configure --prefix=$JEMALLOC_PREFIX && make && make install_bin install_include install_lib  && rm -rf /usr/src/*
+
+# Build Bro
+WORKDIR /usr/src
+#RUN git clone --recursive git://git.bro.org/bro
+#WORKDIR /usr/src/bro
+RUN curl --insecure -OsL https://www.bro.org/downloads/$PROG-$BRO_VERS.$EXT && tar -xzf $PROG-$BRO_VERS.$EXT
+WORKDIR /usr/src/$PROG-$BRO_VERS
+RUN ./configure --prefix=$PREFIX --with-caf=$CAF_PREFIX --with-broker=$BROKER_PREFIX --enable-jemalloc --with-jemalloc=$JEMALLOC_PREFIX && cd build && make && make install && make install-aux  && rm -rf /usr/src/*
+
+WORKDIR /
+

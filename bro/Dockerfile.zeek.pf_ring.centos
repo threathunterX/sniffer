@@ -1,0 +1,79 @@
+FROM centos:7 as builder
+MAINTAINER wangbo@threathunter.com
+
+ENV ZEEK_VERSION 2.6.1
+ENV PF_VERSION 7.4.0
+ENV JM_VERSION 5.2.0
+
+ENV ZEEK_PREFIX /opt/bro
+ENV PF_PREFIX /opt/PF_RING
+ENV JEMALLOC_PREFIX /opt/jemalloc
+
+RUN yum -y install zlib openssl libstdc++ libpcap geoip libgcc tini \
+  openssl-devel \
+  libpcap-devel \
+  python-devel \
+  geoip-devel \
+  zlib-devel \
+  binutils \
+  fts-devel \
+  cmake \
+  bison \
+  perl \
+  make \
+  flex \
+  git \
+  gcc \
+  gcc-c++ \
+  fts \
+  automake
+
+# Build PF_RING
+RUN echo "===> Cloning PF_RING..." \
+    && cd /tmp \
+    && git clone --branch $PF_VERSION https://github.com/ntop/PF_RING.git \
+    && cd /tmp/PF_RING/userland/lib \
+    && ./configure && make \
+    && cd /tmp/PF_RING/userland/libpcap \
+    && ./configure --prefix=$PF_PREFIX && make && make install
+
+# Build jemalloc
+RUN echo "===> Cloning jemalloc..." \
+    && cd /tmp \
+    && git clone --branch $JM_VERSION https://github.com/jemalloc/jemalloc.git \
+    && cd /tmp/jemalloc \
+    && ./autogen.sh && ./configure --prefix=$JEMALLOC_PREFIX && make && make install_bin install_include install_lib
+
+# Build zeek
+RUN echo "===> Cloning zeek..." \
+  && cd /tmp \
+# && git clone --recursive https://github.com/zeek/zeek.git 
+  && git clone --branch v$ZEEK_VERSION https://github.com/zeek/zeek.git
+
+RUN echo "===> Compiling zeek..." \
+  && cd /tmp/zeek \
+  && ./configure --prefix=$ZEEK_PREFIX \
+  --disable-broker-tests \
+  --disable-broctl \
+  --disable-auxtools \
+  --with-pcap=$PF_PREFIX \
+  --enable-jemalloc --with-jemalloc=$JEMALLOC_PREFIX \
+  && make \
+  && make install
+
+####################################################################################################
+FROM centos:7
+
+RUN yum -y install ca-certificates zlib openssl libstdc++ libpcap geoip libgcc fts
+
+COPY --from=builder $ZEEK_PREFIX $ZEEK_PREFIX
+COPY --from=builder $PF_PREFIX $PF_PREFIX
+COPY --from=builder $JEMALLOC_PREFIX $JEMALLOC_PREFIX
+COPY --from=builder /tmp/zeek/build/aux/broker/python/broker /usr/local/lib/python2.7/site-packages/broker
+
+WORKDIR /
+
+ENV LD_LIBRARY_PATH /opt/bro/lib/:/opt/bro/lib64/:/lib/:/usr/lib/:/usr/lib64/:/usr/local/lib/:/usr/local/lib64/
+ENV BROPATH .:/data/config:/opt/bro/share/bro:/opt/bro/share/bro/policy:/opt/bro/share/bro/site
+ENV PATH $PATH:/opt/bro/bin
+

@@ -1,0 +1,66 @@
+FROM python:2.7-alpine as builder
+
+ENV ZEEK_VERSION 2.6.1
+
+RUN apk add --no-cache zlib openssl libstdc++ libpcap geoip libgcc tini
+RUN apk add --no-cache -t .build-deps \
+  linux-headers \
+  openssl-dev \
+  libpcap-dev \
+  python-dev \
+  geoip-dev \
+  zlib-dev \
+  binutils \
+  fts-dev \
+  cmake \
+  clang \
+  bison \
+  perl \
+  make \
+  flex \
+  git \
+  g++ \
+  fts
+
+RUN echo "===> Cloning zeek..." \
+  && cd /tmp \
+  && git clone --recursive https://github.com/zeek/zeek.git
+# && git clone --branch v$ZEEK_VERSION https://github.com/zeek/zeek.git
+
+RUN echo "===> Compiling zeek..." \
+  && cd /tmp/zeek \
+  && CC=clang ./configure --prefix=/opt/bro \
+  --disable-broker-tests \
+  --disable-broctl \
+  --disable-auxtools \
+  && make \
+  && make install
+
+RUN echo "===> Compiling af_packet plugin..." \
+    && mkdir -p /tmp/zeek/aux/plugins \
+    && cd /tmp/zeek/aux/plugins \
+    && git clone https://github.com/J-Gras/bro-af_packet-plugin.git \
+    && cd /tmp/zeek/aux/plugins/bro-af_packet-plugin \
+    && ./configure --with-kernel=/usr --bro-dist=/tmp/zeek\
+    && make \
+    && make install
+
+RUN echo "===> Shrinking image..." \
+  && strip -s /opt/bro/bin/bro
+
+####################################################################################################
+FROM python:2.7-alpine
+
+RUN apk add zlib openssl libstdc++ libpcap geoip libgcc fts
+
+COPY --from=builder /opt/bro /opt/bro/
+COPY --from=builder /tmp/zeek/build/aux/broker/python/broker /usr/local/lib/python2.7/site-packages/broker
+
+ENV LD_LIBRARY_PATH /opt/bro/lib/:/opt/bro/lib64/:/lib/:/usr/lib/:/usr/lib64/:/usr/local/lib/:/usr/local/lib64/
+ENV BROPATH .:/data/config:/opt/bro/share/bro:/opt/bro/share/bro/policy:/opt/bro/share/bro/site
+ENV PATH $PATH:/opt/bro/bin
+
+#ENTRYPOINT ["bro"]
+#CMD ["-h"]
+
+WORKDIR /
